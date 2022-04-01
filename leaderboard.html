@@ -20,7 +20,7 @@
 
 <script>
     window.onPingCompleted = function(session){
-        var req = $.get(API_SERVER + "/leaderboardfull/");
+        var req = $.get(API_SERVER + "/fullleaderboard/");
         req.done(function(x){
             x = x['data'];
             $("#leaderboard tr").remove();
