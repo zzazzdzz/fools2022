@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<meta charset='utf-8'>
+<title>TheZZAZZGlitch's Fools2022: Return to Glitchland</title>
+<meta name="viewport" content="width=1200">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=PT+Sans&display=swap" rel="stylesheet">
+
+<script src="bootstrap/jquery-3.1.0.min.js"></script>
+<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="bootstrap/css/bootstrap-theme.min.css">
+<script src="bootstrap/js/bootstrap.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css">
+
+<link rel='stylesheet' href='style.css' type='text/css'>
+<script src='script.js'></script>
+
+<script>
+
+</script>
+
+<div id='loader'><img src='img/loading.svg'></div>
+
+<nav class="navbar navbar-inverse navbar-static-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html"><noscript>Please enable JavaScript to play</noscript> Fools2022</a>
+        </div>
+        <div class="navbar-collapse collapse" id="navbar"></div>
+    </div>
+</nav>
+<div class="navbar-spacing"></div>
+
+<div id="content">
+    <div class="f-container panel panel-default">
+        <div class="f-inside-faq">
+            <div class="f-faq-explanation">
+                <h1>Using the desktop client</h1>
+                <p>The event save file connects to the Internet by utilizing the GBA Link Cable - more precisely, the JoyBus protocol. Turns out, two of the most popular Game Boy Advance emulators, <a href='https://mgba.io/'>mGBA</a> and <a href='https://github.com/visualboyadvance-m/visualboyadvance-m/releases'>VBA-M</a>, support JoyBus transmissions over TCP/IP. Thanks to this, it's possible to connect them to the event servers by using a dedicated client application. Here are some instructions to help you set this up.</p>
+                <h1>Download everything!</h1>
+                <p>We begin by downloading a bunch of stuff:
+                </p>
+                <ul class='f-tutorial-ul'>
+                    <li>The emulator, obviously! You can either use <a href='https://mgba.io/downloads.html'>endrift's excellent mGBA emulator</a> (recommended), or the latest version of <a href='https://github.com/visualboyadvance-m/visualboyadvance-m/releases'>VBA-M</a>. Normal VBA or VBA-Link won't suffice - please <a href='https://zzazzdzz.github.io/emu/'>quit using these ancient emulators</a>! If you have any doubts, just download mGBA.
+                    <li>The event save file. It can be downloaded at the <a href="https://thezzazzglitch.itch.io/fools2022">itch.io project page</a> - look for the SAV file tagged with the latest version.</li>
+                    <li>The desktop client executable. Your emulator won't be able to connect to a remote service by itself, since link cable functionalities are intended mostly for local use. To help contact the event servers, a local proxy needs to be created. The emulator will send requests to a server launched on your machine, which will forward them to the Internet. Just like before, you can find the <i>Fools2022DesktopClient.exe</i> on the <a href="https://thezzazzglitch.itch.io/fools2022">itch.io project page</a></li>
+                    <li>A clean ROM image of <i>Pok&eacute;mon Emerald (U)</i>. You're on your own on that one!</li>
+                </ul>
+                <h1>Set things up!</h1>
+                <p>Start by opening your emulator, loading the ROM, and importing the SAV file:</p>
+                <ul class='f-tutorial-ul2'>
+                    <li style='margin-top:10px'>In mGBA, use the <i>"File &raquo; Load alternate save game"</i> option.</li>
+                    <li>In VBA-M, use the <i>"File &raquo; Import &raquo; Battery file"</i> option.</li>
+                </ul>
+                <p>Then, launch the client application (<i>Fools2020DesktopClient.exe</i>). If you're running Linux - no worries, the application works under Wine without problems. Log in using your credentials from the event site. Then, connect to the local server:</p>
+                <ul class='f-tutorial-ul'>
+                    <li>Regardless of the emulator you're using - load the save file first, and play until you see the <i>"Welcome to TheZZAZZGlitch's Fools2022..."</i> message. <b>This is an important step</b>.</li>
+                    <li class='f-tutorial-ul2'>Then, if you're using mGBA: <ul>
+                        <li>Select <i>"File &raquo; Connect to Dolphin"</i>.</li>
+                        <li>Make sure <i>"Local computer"</i> is selected.</li>
+                        <li>Click <i>"Connect"</i>.</li>
+                    </ul></li>
+                    <li class='f-tutorial-ul2'>Or if you're using VBA-M: <ul>
+                        <li>Select <i>"Options &raquo; Link &raquo; Type &raquo; GameCube"</i>.</li>
+                        <li>Afterwards, select <i>"Options &raquo; Link &raquo; Start network link"</i>.</li>
+                        <li>Select <i>"Client"</i>. In the server field, type in <i>localhost</i>.</li>
+                        <li>Click <i>"Connect"</i>.</li>
+                    </ul>
+                </ul>
+                <h1>Notes and troubleshooting</h1>
+                <ul class='f-tutorial-ul'>
+                    <li><b>Do not use savestates</b>, however tempting. Savestating might cause desynchronization between server and client states, leading to connection errors, or even loss of progress. Or even worse, some quests might become unfinishable. Just don't use savestates, trust me.</li>
+                    <li>Users are disconnected after 1 hour of inactivity. If you exceed this limit, you'll have to restart the client and log in again.</li>
+                    <li>Sometimes, the emulator might just disconnect on its own - such is the nature of networking. If you're getting connection errors, reconnecting the emulator is the first thing you should try.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<meta charset='utf-8'>
+<title>TheZZAZZGlitch's Fools2022: Return to Glitchland</title>
+<meta name="viewport" content="width=1200">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=PT+Sans&display=swap" rel="stylesheet">
+
+<script src="bootstrap/jquery-3.1.0.min.js"></script>
+<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="bootstrap/css/bootstrap-theme.min.css">
+<script src="bootstrap/js/bootstrap.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css">
+
+<link rel='stylesheet' href='style.css' type='text/css'>
+<script src='script.js'></script>
+
+<script>
+    function login(e){
+        loaderStart(e, []);
+        var req = $.post(API_SERVER + "/login", JSON.stringify({
+            "u": $("#username").val(),
+            "p": $("#pass").val()
+        }));
+        req.fail(function(xhr){
+            if (xhr.status == 401) modalMessage("Incorrect username or password.");
+            else if (xhr.status == 429) modalMessage("It appears you are making an excessive amount of requests. To ensure our service is available for everyone at all times, we had to cut you off temporarily. Don't worry, just refresh this page after a minute or two. However, be informed that further incidents like this may result in your IP getting banned.");
+            else modalMessage("Could not connect to the event server.<br>Try again in a few minutes.");
+            loaderFinish();
+        });
+        req.done(function(x){
+            if (!x['error']){
+                window.localStorage.setItem("session", x['data']['session']);
+                window.location = "index.html";
+            }else{
+                modalMessage("An error occured: " + x['msg']);
+                loaderFinish();
+            }
+        });
+    }
+    
+    $(document).ready(function(){
+        $('.f-form-field').keypress(function(e){
+            if (e.which == 13){
+                $('.f-form-field').blur();
+                e.preventDefault();
+                $("#login-btn")[0].click();
+                return false;
+            }
+        });
+    });
+</script>
+
+<div id='loader'><img src='img/loading.svg'></div>
+
+<nav class="navbar navbar-inverse navbar-static-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html"><noscript>Please enable JavaScript to play</noscript> Fools2022</a>
+        </div>
+        <div class="navbar-collapse collapse" id="navbar"></div>
+    </div>
+</nav>
+<div class="navbar-spacing"></div>
+
+<div id="content">
+    <div class="f-container panel panel-default">
+        <div class="f-category">
+            Log in
+        </div>
+        <div class="f-inside-padded">
+            <input type='text' class='form-control f-form-field' placeholder='Username' maxlength="20" id='username'>
+            <input type='password' class='form-control f-form-field' placeholder='Password' id='pass'>
+            <button class="btn btn-success" onclick="login(this)" id="login-btn">
+                Log in
+            </button>
+        </div>
+    </div>
+    
+    <div class="f-container panel panel-default">
+        <div class="f-single-line">
+            Don't have an account yet? <a href='register.html'>Register here</a>.
+        </div>
+    </div>
+</div>

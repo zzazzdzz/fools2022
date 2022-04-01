@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<meta charset='utf-8'>
+<title>TheZZAZZGlitch's Fools2022: Return to Glitchland</title>
+<meta name="viewport" content="width=1200">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=PT+Sans&display=swap" rel="stylesheet">
+
+<script src="bootstrap/jquery-3.1.0.min.js"></script>
+<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="bootstrap/css/bootstrap-theme.min.css">
+<script src="bootstrap/js/bootstrap.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css">
+
+<link rel='stylesheet' href='style.css' type='text/css'>
+<script src='script.js'></script>
+
+<script>
+    function register(e){
+        loaderStart(e, []);
+        var req = $.post(API_SERVER + "/register/", JSON.stringify({
+            "u": $("#username").val(),
+            "p1": $("#pass1").val(),
+            "p2": $("#pass2").val(),
+            "m": $("#message").val()
+        }));
+        req.fail(function(xhr){
+            try {
+                if (xhr.status == 422) {
+                    var r = JSON.parse(xhr.responseText);
+                    modalMessage(r['msg']);
+                } 
+                else if (xhr.status == 429) modalMessage("It appears you are making an excessive amount of requests. To ensure our service is available for everyone at all times, we had to cut you off temporarily. Don't worry, just refresh this page after a minute or two. However, be informed that further incidents like this may result in your IP getting banned.");
+                else throw "bepis";
+            } catch(e) {
+                modalMessage("Could not connect to the event server. Try again in a few minutes.");
+            }
+            loaderFinish();
+        });
+        req.done(function(x){
+            if (!x['error']){
+                localStorage['session'] = x['data']['session'];
+                modalMessageWithRedirect("Registration was successful.", "index.html");
+            }else{
+                modalMessage("An error occured: " + x['msg']);
+                loaderFinish();
+            }
+        });
+    }
+</script>
+
+<div id='loader'><img src='img/loading.svg'></div>
+
+<nav class="navbar navbar-inverse navbar-static-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html"><noscript>Please enable JavaScript to play</noscript> Fools2022</a>
+        </div>
+        <div class="navbar-collapse collapse" id="navbar"></div>
+    </div>
+</nav>
+<div class="navbar-spacing"></div>
+
+<div id="content">
+    <div class="f-container panel panel-default">
+        <div class="f-category">
+            Create a new account
+        </div>
+        <div class="f-inside-padded">
+            <p>Choose your username. Usernames are restricted to a maximum of 15 characters from the <span style='display:inline-block;border-bottom:1px dotted #444;cursor:help' title='A-Z, a-z, 0-9, spaces and specials: À Á Â Ç È É Ê Ë Ì Î Ï Ò Ó Ô Œ Ù Ú Û Ñ ß à á ç è é ê ë ì î ï ò ó ô œ ù ú û ñ Í â í . - Ä Ö Ü ä ö ü'>Gen III latin character set</span>.</p>
+            <input type='text' class='form-control f-form-field' placeholder='Your username (max 15 characters)' maxlength="15" id='username'>
+            <p>Set your password. Make sure you remember it, passwords cannot be reset or changed.</p>
+            <input type='password' class='form-control f-form-field' placeholder='Your password' id='pass1'>
+            <input type='password' class='form-control f-form-field' placeholder='Repeat your password' id='pass2'>
+            <p>Like every year, the best scores will have a chance to appear in a <a href='https://www.youtube.com/watch?v=ro9sH2qHyD8'>result video similar to this one</a>, along with a custom message. You can enter the message here!</p>
+            <input type='text' class='form-control f-form-field' placeholder='Your message (max 150 characters). You can change this later!' maxlength="150" id='message'>
+            <br>
+            <div class='register-notes'>
+                <p>&bull; We reserve the right to remove your account and all of its associated records at any time, for any reason. We probably won't, but we might.</p>
+                <p>&bull; The game contains user-provided content. We are not responsible for any content provided by the players. We might remove any politically extreme, pornographic, illegal or otherwise unethical content at our discretion. We probably won't, but we might.</p>
+                <p>&bull; The game contains several optional hacking challenges. However, hacking the event service itself is not part of the challenge. Any hacking attempts that purely aim to ruin the fun for everyone (denial of service attacks, erasing scores of other people, stealing user data, etc.) will result in account termination, permanent blocking of associated IP addresses, or in extreme cases - legal action.</p>
+            </div>
+            <button class="btn btn-success" onclick="register(this)">
+                Register
+            </button>
+        </div>
+    </div>
+</div>

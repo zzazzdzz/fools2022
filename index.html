@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<meta charset='utf-8'>
+<title>TheZZAZZGlitch's Fools2022: Return to Glitchland</title>
+<meta name="viewport" content="width=1200">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=PT+Sans&display=swap" rel="stylesheet">
+
+<script src="bootstrap/jquery-3.1.0.min.js"></script>
+<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="bootstrap/css/bootstrap-theme.min.css">
+<script src="bootstrap/js/bootstrap.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css">
+
+<link rel='stylesheet' href='style.css' type='text/css'>
+<script src='script.js'></script>
+
+<script>
+    window.onPingCompleted = function(session){
+        if (SESSION['logged_in']) {
+            $("#flavor1").hide();
+            $("#flavor2").show();
+        }
+        var req = $.get(API_SERVER + "/leaderboard/");
+        req.done(function(x){
+            x = x['data'];
+            $("#leaderboard tr").remove();
+            for (var i=0; i<x.length; i++){
+                var cl = x[i]['title'].toLowerCase().replace(/\s/g, '-');
+                var row = $('<tr class="' + (x[i]['wholesome'] ? "wholesome" : "") + '">');
+                row.append($("<td style='width:150px'><b>#" + (i+1) + "</b></td>"));
+                row.append($("<td><b><a class='nick-" + cl + "' href=\"profile.html?" + entities(x[i]['uid']) + "\">" + entities(x[i]['username']) + "</a></b> <i class='title-" + cl + "'>&laquo;" + entities(x[i]['title']) + "&raquo;&nbsp;</i></td>"));
+                row.append($("<td style='width:200px'><b>" + x[i]['score'] + "</b></td>"));
+                if (x[i]['username'] == SESSION['username']) row.addClass("f-curuser");
+                $("#leaderboard").append(row);
+            }
+            if (x.length == 0){
+                $("#leaderboard").html("<tr><td><br>You're so early, there's no one here yet!<br>&nbsp;</td></tr>");
+            }
+        });
+    };
+</script>
+
+<div id='loader'><img src='img/loading.svg'></div>
+
+<nav class="navbar navbar-inverse navbar-static-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html"><noscript>Please enable JavaScript to play</noscript> Fools2022</a>
+        </div>
+        <div class="navbar-collapse collapse" id="navbar"></div>
+    </div>
+</nav>
+<div class="navbar-spacing"></div>
+
+<div id="content">
+    <div id="intro" class="panel panel-default">
+        <h1>Return to Glitchland</h1>
+        <h2>TheZZAZZGlitch's April Fools Event 2022</h2>
+        <iframe src="https://itch.io/embed/1462202" height="167" width="552" frameborder="0" style='margin-bottom:8px'><a href="https://thezzazzglitch.itch.io/fools2022">Return to Glitchland - TheZZAZZGlitch&#039;s April Fools Event 2022 by TheZZAZZGlitch</a></iframe>
+        <br>
+        <span class='countdowns'>
+            <span id='countdown'>? until the end of the event.</span>
+        </span><br>
+        <div class="f-ccby"><br><a title="Nature" href="https://flickr.com/photos/rodrixap/10688437793/">Nature</a> by <a href="https://flickr.com/people/rodrixap">RodrixAP</a> licensed under <a href="https://creativecommons.org/licenses/by/2.0/">CC BY 2.0</a>.
+        Pokémon is owned by The Pokémon Company, Game Freak and Nintendo Co. Ltd.</div>
+    </div>
+
+    <div class="f-container panel panel-default">
+        <div class="f-single-line" style="padding: 10px 25px 10px 25px; line-height: 25px" id="flavor1">
+            A <i>Pok&eacute;mon Emerald</i> save file that connects to the Internet with some link cable magic.<br>
+            It connects you to the region that looks... <a href='https://zzazzdzz.github.io/fools2018/'>awfully familiar</a>. See what's changed after 4 years. <a href='register.html'>Register</a> to begin your adventure.
+        </div>
+        <div class="f-single-line" style="padding: 10px 25px 10px 25px; line-height: 25px; display: none" id="flavor2">
+            You are logged in. <a href='play.html'>Start playing now</a>!
+        </div>
+    </div>
+
+    <div class="f-container panel panel-default">
+        <div class="f-category">
+            The leaderboard (top 30; <a href='leaderboard.html'>see full leaderboard</a>)
+        </div>
+        <table class="table table-striped table-bordered table-condensed table-hover f-inside-table leaderboard" id="leaderboard">
+            <tr>
+                <td colspan="4">
+                    <br>
+                    <img src='img/loading.svg' alt='Loading...'>
+                    <br>&nbsp;
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<br>&nbsp;
