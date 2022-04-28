@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<meta charset='utf-8'>
+<title>TheZZAZZGlitch's Fools2022: Return to Glitchland</title>
+<meta name="viewport" content="width=1200">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=PT+Sans&display=swap" rel="stylesheet">
+
+<script src="bootstrap/jquery-3.1.0.min.js"></script>
+<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="bootstrap/css/bootstrap-theme.min.css">
+<script src="bootstrap/js/bootstrap.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css">
+
+<link rel='stylesheet' href='style.css' type='text/css'>
+<script src='script.js'></script>
+<script src='save.js'></script>
+<script src='iodineGBA.min.js'></script>
+
+<script>
+    localStorage['IodineGBA_key_a'] = 90;
+    localStorage['IodineGBA_key_b'] = 83;
+    localStorage['IodineGBA_key_select'] = 32;
+    localStorage['IodineGBA_toggleSmoothScaling'] = 'false';
+    localStorage['IodineGBA_skipBoot'] = 'true';
+</script>
+
+<div id='loader'><img src='img/loading.svg'></div>
+
+<nav class="navbar navbar-inverse navbar-static-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html"><noscript>Please enable JavaScript to play</noscript> Fools2022</a>
+        </div>
+        <div class="navbar-collapse collapse" id="navbar"></div>
+    </div>
+</nav>
+<div class="navbar-spacing"></div>
+
+<div id="content">
+    <div class="f-container panel panel-default">
+        <div class="f-category">
+            Online client
+        </div>
+        <div class="f-inside-padded">
+            <div id="client-before">
+                <p>
+                    This is an HTML5-based online client for the event. It requires no configuration and can be played directly in your modern Web browser. There is only one thing that you have to provide on your own, and that's the ROM image of Pokémon Emerald (U).
+                </p>
+                <p>
+                    Once you select the proper ROM, a JavaScript-based GBA emulator will start and the event save file will be automatically loaded. All progress will be automatically synchronized with the server.
+                </p>
+                <p>
+                    Controls: Z for the A button, S for the B button, Enter for the Start button, Space for the Select button, arrow keys as the D-Pad.<br>
+                    There's also touch controls, in case you want to play on a mobile device.
+                </p>
+                <input type='file' id='rom_load'>
+                <label class='f-save-file-input' id="rom_load_inp" for='rom_load'>Select ROM image</label>
+                <br><br>
+                <span style='font-size:12px'>Note - this online emulator is not the best way to play the game. In fact, it's far from it.<br>
+                It's hard to find good JavaScript GBA emulators. How about playing <a href='offline.html'>locally</a>?</span>
+            </div>
+            <div id="client-running" style='display:none'>
+                <div id="main">
+                    <canvas class="canvas" id="emulator_target" width="240" height="160"></canvas>
+                    <div id='buttons' style="user-select: none; position: relative; width: 450px; height: 150px; margin: 20px auto 10px auto;">
+                        <button style='position: absolute; left: 70px; top: 0;' class="f-gb-button" data-btn='6'>▲</button>
+                        <button style='position: absolute; left: 70px; top: 70px;' class="f-gb-button" data-btn='7'>▼</button>
+                        <button style='position: absolute; left: 0; top: 35px;' class="f-gb-button" data-btn='5'>◀</button>
+                        <button style='position: absolute; left: 140px; top: 35px;' class="f-gb-button" data-btn='4'>▶</button>
+                        <button style='position: absolute; right: 0; top: 35px;' class="f-gb-button" data-btn='0'>A</button>
+                        <button style='position: absolute; right: 70px; top: 35px;' class="f-gb-button" data-btn='1'>B</button>
+                        <button style='position: absolute; right: 165px; top: 10px;' class="f-gb-button f-gb-button-small" data-btn='3'>St</button>
+                        <button style='position: absolute; right: 165px; bottom: 30px;' class="f-gb-button f-gb-button-small" data-btn='2'>Se</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="container" style='display:none'>
+    <!--
+        iodineGBA is so glued to the GUI, the only way to customize the appearance was to take the original GUI and hide it behind my own ._. 
+    
+        or maybe I'm doing something wrong, idk
+    -->
+    <div id="menu" class="paused">
+        <ul class="menu" id="menu_top">
+            <li>
+                File
+                <ul>
+                    <li><span>BIOS: </span> <input type="file" id="bios_load" class="files"></li>
+                </ul>
+            </li>
+            <li id="play" class="show">Play</li>
+            <li id="pause" class="hide">Pause</li>
+            <li id="restart">Restart</li>
+            <li>
+                Settings
+                <ul>
+                    <li>
+                        <input type="checkbox" id="skip_boot"> Skip Boot Intro
+                    </li>
+                    <li>
+                        <input type="checkbox" id="toggleSmoothScaling" checked="checked"> Smooth Scaling
+                    </li>
+                    <li>
+                        <input type="checkbox" id="toggleDynamicSpeed"> Dynamic Speed
+                    </li>
+                    <li>
+                        <input type="checkbox" id="offthread-cpu" checked="checked"> CPU off-thread
+                    </li>
+                    <li>
+                        <input type="checkbox" id="offthread-gpu" checked="checked"> GPU off-thread
+                    </li>
+                    <li>
+                        <input type="checkbox" id="sound"> Sound
+                    </li>
+                    <li>
+                        GBA Bindings
+                        <ul>
+                            <li id="key_a">
+                                <span>A</span>
+                            </li>
+                            <li id="key_b">
+                                <span>B</span>
+                            </li>
+                            <li id="key_l">
+                                <span>L</span>
+                            </li>
+                            <li id="key_r">
+                                <span>R</span>
+                            </li>
+                            <li id="key_start">
+                                <span>Start</span>
+                            </li>
+                            <li id="key_select">
+                                <span>Select</span>
+                            </li>
+                            <li id="key_up">
+                                <span>↑</span>
+                            </li>
+                            <li id="key_down">
+                                <span>↓</span>
+                            </li>
+                            <li id="key_left">
+                                <span>←</span>
+                            </li>
+                            <li id="key_right">
+                                <span>→</span>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        Emulator Bindings
+                        <ul>
+                            <li id="key_volumeup">
+                                <span>Volume Up</span>
+                            </li>
+                            <li id="key_volumedown">
+                                <span>Volume Down</span>
+                            </li>
+                            <li id="key_speedup">
+                                <span>Speed Up</span>
+                            </li>
+                            <li id="key_slowdown">
+                                <span>Slow Down</span>
+                            </li>
+                            <li id="key_speedreset">
+                                <span>Speed Reset</span>
+                            </li>
+                            <li id="key_fullscreen">
+                                <span>Fullscreen</span>
+                            </li>
+                            <li id="key_playpause">
+                                <span>Play/Pause</span>
+                            </li>
+                            <li id="key_restart">
+                                <span>Restart</span>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                Volume
+                <ul>
+                    <li>
+                        <input type="range" id="volume">
+                    </li>
+                </ul>
+            </li>
+            <li id="saves_menu">
+                Saves
+                <ul id="saves_menu_container">
+                    <li>
+                        <span>Import:</span><input type="file" id="import" class="files">
+                    </li>
+                    <li id="existing_saves">
+                        <span>Existing Saves</span>
+                        <ul id="existing_saves_list">
+
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="./" id="export" target="_new">Export All Saves</a>
+                    </li>
+                </ul>
+            </li>
+            <li id="fullscreen">Fullscreen</li>
+            <li>
+                <span id="speed">Speed</span>
+                <ul>
+                    <li>
+                        <input type="range" id="speedset">
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div class="touch-controls">
+        <div class="touch-dpad">
+            <button id="touch-up">↑</button><br>
+            <button id="touch-left">←</button>
+            <button id="touch-right">→</button><br>
+            <button id="touch-down">↓</button>
+        </div>
+        <div class="touch-buttons">
+            <button id="touch-select">SELECT</button> 
+            <button id="touch-start">START</button>
+        </div>
+        <div class="touch-buttons">
+            <button id="touch-a">A</button>
+            <button id="touch-b">B</button><br>
+            <button id="touch-l">L</button>
+            <button id="touch-r">R</button>
+        </div>
+    </div>
+    <span class="message" id="tempMessage"></span>
+</div>
+
+<script>
+	window.joyExch = 0;
+	window.joyRecv = 0;
+	window.joySend = 0;
+	window.joyExchDelay = 50;
+	window.joyCommBusy = true;
+	
+	STATE_HANDSHAKE_FIRST = 1
+	STATE_HANDSHAKE_SECOND = 2
+	STATE_HANDSHAKE_RESPONSE_FIRST = 3
+	STATE_HANDSHAKE_RESPONSE_SECOND = 4
+	STATE_READ_PACKET_LENGTH = 5
+	STATE_READ_PACKET_DATA = 6
+	STATE_PROCESS_PACKET = 7
+	STATE_WRITE_RESPONSE_LENGTH = 8
+	STATE_WRITE_RESPONSE_DATA = 9
+	
+	curState = STATE_HANDSHAKE_FIRST;
+	packetLen = 0;
+	curPacket = [];
+    curProtoVersion = 0;
+    packetReady = false;
+
+    function arrayToBase64(arrayIn) {
+        var binString = "";
+        var length = arrayIn.length;
+        for (var index = 0; index < length; ++index) {
+            if (typeof arrayIn[index] == "number") {
+                binString += String.fromCharCode(arrayIn[index]);
+            }
+        }
+        return btoa(binString);
+    }
+
+    function base64ToArray(b64String) {
+        var binString = atob(b64String);
+        var outArray = [];
+        var length = binString.length;
+        for (var index = 0; index < length;) {
+            outArray.push(binString.charCodeAt(index++) & 0xFF);
+        }
+        return outArray;
+    }
+
+    function sendReqToBackend(data) {
+        basedData = arrayToBase64(data);
+        packetReady = false;
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", API_SERVER + "/packet/" + SESSION['uid'], true);
+        xhr.setRequestHeader("Content-Type", "text/plain");
+        xhr.setRequestHeader("X-FoolsSessionToken", localStorage["session"]);
+        xhr.onreadystatechange = function() {
+            if (this.readyState == XMLHttpRequest.DONE) {
+                if (this.status == 200) {
+                    curPacket = base64ToArray(xhr.responseText);
+                    while (curPacket.length % 4 != 0) curPacket.push(0);
+                } else {
+                    curPacket = [];
+                }
+                var refreshToken = xhr.getResponseHeader("X-FoolsRefreshToken");
+                if (refreshToken) localStorage['session'] = refreshToken;
+                var protoVersion = xhr.getResponseHeader("X-FoolsProtocolVersion");
+                if (protoVersion) curProtoVersion = parseInt(protoVersion);
+                if (isNaN(curProtoVersion)) curProtoVersion = 0;
+                if (this.status == 200) packetReady = true;
+                else setTimeout('packetReady=true', 1000);
+            }
+        };
+        xhr.send(basedData);
+    }
+
+	function joyMakeExchange() {
+		if (window.joyCommBusy) return;
+		window.joyCommBusy = true;
+		if (window.joyRecv < 0) window.joyRecv += 0xffffffff + 1;
+		if (window.joySend < 0) window.joySend += 0xffffffff + 1;
+
+        window.joyExchDelay = 50;
+		
+		if (curState == STATE_HANDSHAKE_FIRST) {
+			if (window.joySend == 0xbe5015ff) curState = STATE_HANDSHAKE_SECOND;
+		}
+		else if (curState == STATE_HANDSHAKE_SECOND) {
+			if (window.joySend == 0xffbe5015) curState = STATE_HANDSHAKE_RESPONSE_FIRST;
+		}
+		else if (curState == STATE_HANDSHAKE_RESPONSE_FIRST) {
+			window.joyRecv = 0x000f0015;
+			curState = STATE_HANDSHAKE_RESPONSE_SECOND;
+		}
+		else if (curState == STATE_HANDSHAKE_RESPONSE_SECOND) {
+			window.joyRecv = 0x20221337;
+			curState = STATE_READ_PACKET_LENGTH;
+		}
+		else if (curState == STATE_READ_PACKET_LENGTH) {
+			packetLen = window.joySend;
+			//console.log("len=" + packetLen);
+			curPacket = [];
+			curState = STATE_READ_PACKET_DATA;
+		}
+		else if (curState == STATE_READ_PACKET_DATA) {
+			var v = window.joySend;
+			curPacket.push((v >>  0) & 0xff);
+			curPacket.push((v >>  8) & 0xff);
+			curPacket.push((v >> 16) & 0xff);
+			curPacket.push((v >> 24) & 0xff);
+			packetLen--;
+			if (packetLen == 0) {
+                sendReqToBackend(curPacket);
+                curState = STATE_PROCESS_PACKET;
+            }
+            window.joyExchDelay = 2;
+		}
+		else if (curState == STATE_PROCESS_PACKET) {
+            if (!packetReady) {
+                window.joyRecv = 0xfef0cec0;
+            } else {
+                if (curPacket.length == 0 || curPacket.length % 4 != 0) {
+                    window.joyRecv = 0xdeaddead;
+                    curState = STATE_HANDSHAKE_FIRST;
+                } else {
+                    window.joyRecv = 0xcaceface;
+                    packetLen = curPacket.length / 4;
+                    curState = STATE_WRITE_RESPONSE_LENGTH;
+                }
+            }
+		}
+        else if (curState == STATE_WRITE_RESPONSE_LENGTH) {
+            window.joyRecv = packetLen + (curProtoVersion * 0x01000000);
+            curState = STATE_WRITE_RESPONSE_DATA;
+        }
+        else if (curState == STATE_WRITE_RESPONSE_DATA) {
+            // online emulator transfers data way too slow, so we're gonna cheat :)
+            // where are we writing?
+            var at = IodineGUI.Iodine.IOCore.cpu.registers[4] - 0x2000000;
+            // write the whole response into memory at once
+            for (var i=0; i<curPacket.length; i++) {
+                IodineGUI.Iodine.IOCore.memory.externalRAM[at+i] = curPacket[i];
+            }
+            // r5 = 1, act as if processing is finished
+            IodineGUI.Iodine.IOCore.cpu.registers[5] = 1;
+            // we still need to send out the correct data
+			var out = curPacket[0] << 0;
+            out |=    curPacket[1] << 8;
+            out |=    curPacket[2] << 16;
+            out |=    curPacket[3] << 24;
+            window.joyRecv = out;
+            curState = STATE_HANDSHAKE_FIRST;
+        }
+		window.joyExch = 2; //6
+		//if (joySend != 0 || joyRecv != 0) console.log(window.joyRecv.toString(16), window.joySend.toString(16));
+	}
+	
+	function joyExchangeLoop() {
+		joyMakeExchange();
+		setTimeout(joyExchangeLoop, window.joyExchDelay);
+	}
+	joyExchangeLoop();
+	
+    window.onPingCompleted = function(session){
+        if (!SESSION['logged_in']) {
+            modalMessageWithRedirect("You are not logged in.", "index.html");
+            return;
+        }
+        var req = new XMLHttpRequest();
+        req.onload = function() {
+            if (this.status == 200) {
+                BIOS_DATA = new Uint8Array(this.response);
+                prepareEmu();
+            }
+        };
+        req.open("GET", "./assets/bios.bin?" + Math.random(), true);
+        req.responseType = "arraybuffer";
+        req.overrideMimeType("text/plain; charset=x-user-defined");
+        req.send(null);
+    };
+
+    function prepareEmu() {
+        if (!IodineGUI || !IodineGUI.Iodine) {
+            setTimeout(prepareEmu, 50);
+            return;
+        }
+        IodineGUI.Iodine.attachBIOS(BIOS_DATA);
+        $(".f-gb-button").each(function(i, e){
+            e.addEventListener("mousedown", function(e){
+                e.preventDefault();
+                IodineGUI.Iodine.keyDown(parseInt(e.target.getAttribute("data-btn")));
+            });
+            e.addEventListener("touchstart", function(e){
+                e.preventDefault();
+                IodineGUI.Iodine.keyDown(parseInt(e.target.getAttribute("data-btn")));
+            });
+            e.addEventListener("mouseup", function(e){
+                e.preventDefault();
+                IodineGUI.Iodine.keyUp(parseInt(e.target.getAttribute("data-btn")));
+            });
+            e.addEventListener("touchend", function(e){
+                e.preventDefault();
+                IodineGUI.Iodine.keyUp(parseInt(e.target.getAttribute("data-btn")));
+            });
+        });
+        addEvent("change", document.getElementById("rom_load"), function(x) {
+            document.getElementById("rom_load_inp").style.display = 'none';
+            setTimeout(function(){ startEmu(); }, 100);
+        });
+    }
+
+    function startEmu() {
+        document.querySelector("#emulator_target").width = 240*2;
+        document.querySelector("#emulator_target").height = 160*2;
+        document.querySelector("#play").click();
+        document.querySelector("#client-before").style.display = 'none';
+        document.querySelector("#client-running").style.display = '';
+    }
+
+</script>

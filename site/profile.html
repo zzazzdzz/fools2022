@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<meta charset='utf-8'>
+<title>TheZZAZZGlitch's Fools2022: Return to Glitchland</title>
+<meta name="viewport" content="width=1200">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=PT+Sans&display=swap" rel="stylesheet">
+
+<script src="bootstrap/jquery-3.1.0.min.js"></script>
+<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="bootstrap/css/bootstrap-theme.min.css">
+<script src="bootstrap/js/bootstrap.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css">
+
+<link rel='stylesheet' href='style.css' type='text/css'>
+<script src='script.js'></script>
+
+<script>
+    function checkedUser(){
+        var cur = SESSION['uid'];
+        var l = window.location.href;
+        if (l.indexOf("?") == -1) return cur;
+        l = l.substring(l.indexOf("?") + 1);
+        l = l.split("#")[0];
+        if (l == "") return cur;
+        return l;
+    }
+
+    window.onPingCompleted = function(session){
+        var req = $.get(API_SERVER + "/profile/" + parseInt(checkedUser()));
+        req.done(function(x){
+            if (!x['error']){
+                x = x['data'];
+                $("#profile-username").text(x['username']);
+                $("#profile-title").html("&laquo;" + x['title'] + "&raquo;&nbsp;");
+                $("#profile-title")[0].className = 'title-' + x['title'].toLowerCase().replace(/\s/g, "-");
+                $("#profile-lottery").text(['none', 'single', 'double', 'triple', 'quadruple', 'quintuple'][x['lottery']]);
+                $("#profile-visited").text(x['visited']);
+                
+                if (x['username'] == SESSION['username']){
+                    $("#profile-settings-link").css("display", "inline");
+                }
+                $("#profile-score").text(x['score']);
+                for (var i=0; i<x['achievements'].length; i++){
+                    var a = x['achievements'][i];
+                    $("[data-achievement-id=" + a + "]").removeClass("f-achievement-incomplete").addClass("f-achievement-complete");
+                }
+                if (x['admin']){
+                    $($(".f-category")[0]).append("<span> (<a href='#' onclick='modalMessage(ADM_INFO)'>administrative information</a>)</span>");
+                    ADM_INFO = x['admin'][0];
+                    for (var i=1; i<x['admin'].length; i++) {
+                        ADM_INFO = ADM_INFO.replace("%" + i, entities(x['admin'][i]));
+                    }
+                }
+                $(".f-container").css("display", "block");
+            }else{
+                modalMessageWithRedirect("An error occured: " + x['msg'], "index.html");
+            }
+        });
+        req.fail(function(xhr){
+            if (xhr.status == 429) modalMessageWithRedirect("It appears you are making an excessive amount of requests. To ensure our service is available for everyone at all times, we had to cut you off temporarily. Don't worry, just refresh this page after a minute or two. However, be informed that further incidents like this may result in your IP getting banned.", "index.html");
+            else modalMessageWithRedirect("Could not connect to the event server. Try again in a few minutes.", "index.html");
+        });
+    };
+</script>
+
+
+<div id='loader'><img src='img/loading.svg'></div>
+
+<nav class="navbar navbar-inverse navbar-static-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html"><noscript>Please enable JavaScript to play</noscript> Fools2022</a>
+        </div>
+        <div class="navbar-collapse collapse" id="navbar"></div>
+    </div>
+</nav>
+<div class="navbar-spacing"></div>
+
+<div id="content">
+    <div class="f-container panel panel-default hide-by-default">
+        <div class="f-category">
+            Profile
+        </div>
+        <div class="f-inside-padded">
+            <div id="profile-username">bepis</div>
+            <div id="profile-title">&laquo;bepis&raquo;&nbsp;</div>
+            <p>Score: <b id="profile-score">bepis</b><br>
+            Visited maps: <b id="profile-visited">bepis</b><br>
+            Highest lottery match: <b id="profile-lottery">bepis</b><br>
+            <span id="profile-settings-link" style="display: none"><br>(<a href="settings.html">change your settings including your message and title here</a>)</span></p>
+        </div>
+    </div>
+    <div class="f-container panel panel-default hide-by-default">
+        <div class="f-category">
+            Return to Glitchland: Main Story Revisited
+        </div>
+        <table class="table table-striped table-bordered table-condensed table-hover f-inside-table f-achievement-list">
+            <tr>
+                <td class='f-achievement-incomplete' data-achievement-id='northernedge'>
+                    <b>To the North!</b><br>
+                    Visit the Northern Edge of Glitchland.<br>
+                    <small>Reward: 30 points</small>
+                </td>
+                <td class='f-achievement-incomplete' data-achievement-id='southernedge'>
+                    <b>To the South!</b><br>
+                    Visit the Southern Edge of Glitchland.<br>
+                    <small>Reward: 30 points</small>
+                </td>
+            </tr>
+            <tr>
+                <td class='f-achievement-incomplete' data-achievement-id='westernedge'>
+                    <b>To the West!</b><br>
+                    Visit the Western Edge of Glitchland.<br>
+                    <small>Reward: 30 points</small>
+                </td>
+                <td class='f-achievement-incomplete' data-achievement-id='easternedge'>
+                    <b>To the East!</b><br>
+                    Visit the Eastern Edge of Glitchland.<br>
+                    <small>Reward: 30 points</small>
+                </td>
+            </tr>
+            <tr>
+                <td class='f-achievement-incomplete' data-achievement-id='alterations'>
+                    <b>Feels Different</b><br>
+                    Visit all forms of the Altering Cave.<br>
+                    <small>Reward: 40 points, <i>Shapeshifter</i> title</small>
+                </td>
+                <td class='f-achievement-incomplete' data-achievement-id='lostwoods'>
+                    <b>Not lost anymore</b><br>
+                    Visit all secret areas of the Lost Woods.<br>
+                    <small>Reward: 40 points, <i>Pathfinder</i> title</small>
+                </td>
+            </tr>
+            <tr>
+                <td class='f-achievement-incomplete' data-achievement-id='exploration1'>
+                    <b>Exploration I: There was an attempt</b><br>
+                    Log in and visit Central Square.<br>
+                    <small>Reward: 10 points</small>
+                </td>
+                <td class='f-achievement-incomplete' data-achievement-id='exploration2'>
+                    <b>Exploration II: Starting out</b><br>
+                    Visit 20 unique maps.<br>
+                    <small>Reward: 20 points, <i>Rookie Explorer</i> title</small>
+                </td>
+            </tr>
+            <tr>
+                <td class='f-achievement-incomplete' data-achievement-id='exploration3'>
+                    <b>Exploration III: Taste of adventure</b><br>
+                    Visit 60 unique maps.<br>
+                    <small>Reward: 30 points, <i>Experienced Explorer</i> title</small>
+                </td>
+                <td class='f-achievement-incomplete' data-achievement-id='exploration4'>
+                    <b>Exploration IV: Expert</b><br>
+                    Visit 120 unique maps.<br>
+                    <small>Reward: 40 points, <i>Exploration Prodigy</i> title</small>
+                </td>
+            </tr>
+            <tr>
+                <td class='f-achievement-incomplete' data-achievement-id='deliria'>
+                    <b>Delirium achieved</b><br>
+                    Visit Deliria.<br>
+                    <small>Reward: 20 points</small>
+                </td>
+                <td class='f-achievement-incomplete' data-achievement-id='designer'>
+                    <b>Field of Koopers 5</b><br>
+                    Check out the best map ever made.<br>
+                    <small>Reward: 20 points</small>
+                </td>
+            </tr>
+            <tr>
+                <td class='f-achievement-incomplete' data-achievement-id='binarywoods'>
+                    <b>Depth First Search</b><br>
+                    Go through the Binary Woods.<br>
+                    <small>Reward: 20 points</small>
+                </td>
+                <td class='f-achievement-incomplete' data-achievement-id='tnetennba'>
+                    <b>It's very hot in the lab</b><br>
+                    Find the microscopic nuclear things.<br>
+                    <small>Reward: 30 points</small>
+                </td>
+            </tr>
+            <tr>
+                <td class='f-achievement-incomplete' data-achievement-id='survey'>
+                    <b>The best Pok&eacute;mon</b><br>
+                    Participate in the survey and give the correct answer.<br>
+                    <small>Reward: 20 points</small>
+                </td>
+                <td class='f-achievement-incomplete' data-achievement-id='reunited'>
+                    <b>Reunited</b><br>
+                    Help the couple in the not-so-glitched-anymore house.<br>
+                    <small>Reward: 20 points</small>
+                </td>
+            </tr>
+            <tr>
+                <td class='f-achievement-incomplete' data-achievement-id='flute'>
+                    <b>Demisemihemidemisemiquaver</b><br>
+                    Return the lost Pok&eacute; Flute.<br>
+                    <small>Reward: 30 points</small>
+                </td>
+                <td class='f-achievement-incomplete' data-achievement-id='hiddenretreat'>
+                    <b>Overhead view is cheating</b><br>
+                    Someone's hiding in the Hidden Retreat.<br>
+                    <small>Reward: 20 points</small>
+                </td>
+            </tr>
+            <tr>
+                <td class='f-achievement-incomplete' data-achievement-id='yetanothersecret'>
+                    <b>Yet Another Secret</b><br>
+                    Find another uninspired secret area.<br>
+                    <small>Reward: 20 points</small>
+                </td>
+                <td class='f-achievement-incomplete' data-achievement-id='recursion'>
+                    <b>Recursive Madness</b><br>
+                    Understand recursion.<br>
+                    <small>Reward: 20 points</small>
+                </td>
+            </tr>
+            <tr>
+                <td class='f-achievement-incomplete' data-achievement-id='helix'>
+                    <b>Fossilized Trio I: Anarchy</b><br>
+                    Acquire the Helix Fossil.<br>
+                    <small>Reward: 20 points</small>
+                </td>
+                <td class='f-achievement-incomplete' data-achievement-id='dome'>
+                    <b>Fossilized Trio II: Democracy</b><br>
+                    Acquire the Dome Fossil.<br>
+                    <small>Reward: 20 points</small>
+                </td>
+            </tr>
+            <tr>
+                <td class='f-achievement-incomplete' data-achievement-id='amber'>
+                    <b>Fossilized Trio III: OLDEN</b><br>
+                    Acquire the Old Amber.<br>
+                    <small>Reward: 20 points</small>
+                </td>
+                <td class='f-achievement-incomplete' data-achievement-id='tookfossils'>
+                    <b>Fossilized Trio IV: In the name of science</b><br>
+                    Return the fossils to the Explorer Sindicate.<br>
+                    <small>Reward: 30 points, <i>Glitch Scientist</i> title</small>
+                </td>
+            </tr>
+            <tr>
+                <td class='f-achievement-incomplete' data-achievement-id='balls1'>
+                    <b>Balls I: Growing a pair</b><br>
+                    Give 2 Pok&eacute; Balls to the collector in Western Glitchland.<br>
+                    <small>Reward: 20 points</small>
+                </td>
+                <td class='f-achievement-incomplete' data-achievement-id='balls2'>
+                    <b>Balls II: Growing two pairs</b><br>
+                    Give 4 Pok&eacute; Balls to the collector in Western Glitchland.<br>
+                    <small>Reward: 30 points</small>
+                </td>
+            </tr>
+            <tr>
+                <td class='f-achievement-incomplete' data-achievement-id='balls3'>
+                    <b>Balls III: Baller crawler</b><br>
+                    Give 6 Pok&eacute; Balls to the collector in Western Glitchland.<br>
+                    <small>Reward: 30 points</small>
+                </td>
+                <td class='f-achievement-incomplete' data-achievement-id='balls4'>
+                    <b>Balls IV: I've seen it all</b><br>
+                    Give 9 Pok&eacute; Balls to the collector in Western Glitchland.<br>
+                    <small>Reward: 40 points, <i>Mr. Balls</i> title</small>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="f-container panel panel-default hide-by-default">
+        <div class="f-category">
+            Return to Glitchland: Main Story Reimagined
+        </div>
+        <table class="table table-striped table-bordered table-condensed table-hover f-inside-table f-achievement-list">
+            <tr>
+                <td class='f-achievement-incomplete' data-achievement-id='mansion'>
+                    <b>Okay Folks</b><br>
+                    If you do have any questions or comments about this, please put them below.<br>
+                    <small>Reward: 20 points</small>
+                </td>
+                <td class='f-achievement-incomplete' data-achievement-id='trees'>
+                    <b>Hack and Slash</b><br>
+                    Cut the excess trees in the Grasslands.<br>
+                    <small>Reward: 20 points</small>
+                </td>
+            </tr>
+            <tr>
+                <td class='f-achievement-incomplete' data-achievement-id='bike'>
+                    <b>RYDEL RYDEL RYDEL RYDEL</b><br>
+                    Acquire the best bike ever.<br>
+                    <small>Reward: 20 points</small>
+                </td>
+                <td class='f-achievement-incomplete' data-achievement-id='interjection'>
+                    <b>Interjection</b><br>
+                    Help resolve the conflict in the Team Magma HQ.<br>
+                    <small>Reward: 30 points, <i>Arch Linux Enjoyer</i> title</small>
+                </td>
+            </tr>
+            <tr>
+                <td class='f-achievement-incomplete' data-achievement-id='femboy'>
+                    <b>Femboy Supremacy</b><br>
+                    Put on the cat ears and show them who's the cutie.<br>
+                    <small>Reward: 40 points, <i>Astolfo Worshipper</i> title</small>
+                </td>
+                <td class='f-achievement-incomplete' data-achievement-id='relic'>
+                    <b>Braille Happens</b><br>
+                    Solve the mystery of the Western Relic.<br>
+                    <small>Reward: 40 points</small>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="f-container panel panel-default hide-by-default">
+        <div class="f-category">
+            Game Corner
+        </div>
+        <table class="table table-striped table-bordered table-condensed table-hover f-inside-table f-achievement-list">
+            <tr>
+                <td class='f-achievement-incomplete' data-achievement-id='gambling1'>
+                    <b>Gambling I: So it begins...</b><br>
+                    Visit the Game Corner.<br>
+                    <small>Reward: 10 points</small>
+                </td>
+                <td class='f-achievement-incomplete' data-achievement-id='gambling2'>
+                    <b>Gambling II: We have a winner!</b><br>
+                    Reach 500 coins in the Game Corner in one sitting.<br>
+                    <small>Reward: 30 points</small>
+                </td>
+            </tr>
+            <tr>
+                <td class='f-achievement-incomplete' data-achievement-id='lottery1'>
+                    <b>Lottery I: Suboptimal RNG</b><br>
+                    Get at least a single match in the Glitchland Lottery.<br>
+                    <small>Reward: 30 points, <i>Gambler</i> title</small>
+                </td>
+                <td class='f-achievement-incomplete' data-achievement-id='lottery2'>
+                    <b>Lottery II: On WR pace</b><br>
+                    Get at least a triple match in the Glitchland Lottery.<br>
+                    <small>Reward: 0 points, <i>Highroller</i> title</small>
+                </td>
+            </tr>
+            <tr>
+                <td class='f-achievement-incomplete' data-achievement-id='lottery3'>
+                    <b>Lottery III: RNG manipulation</b><br>
+                    Get a quintuple match at the Glitchland Lottery.<br>
+                    <small>Reward: 0 points, <i>Lucky Star</i> title</small>
+                </td>
+                <td class='f-achievement-incomplete' data-achievement-id='yeet1'>
+                    <b>YEET I: Welcome to YEET</b><br>
+                    Complete a YEET.<br>
+                    <small>Reward: 30 points</small>
+                </td>
+            </tr>
+            <tr>
+                <td class='f-achievement-incomplete' data-achievement-id='yeet2'>
+                    <b>YEET II: Enemy at the YEET</b><br>
+                    Get a YEET first blood.<br>
+                    <small>Reward: 0 points, <i>Speedrunner</i> title</small>
+                </td>
+                <td class='f-achievement-incomplete' data-achievement-id='yeet3'>
+                    <b>YEET III: Living in the YEET</b><br>
+                    Participate in all five YEETs at least once.<br>
+                    <small>Reward: 0 points, <i>Yeet Elite</i> title</small>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="f-container panel panel-default hide-by-default">
+        <div class="f-category">
+            Cracker Cavern Reborn
+        </div>
+        <table class="table table-striped table-bordered table-condensed table-hover f-inside-table f-achievement-list">
+            <tr>
+                <td class='f-achievement-incomplete' data-achievement-id='cc1'>
+                    <b>Hacking I: Walking through walls</b><br>
+                    Complete Cracker Cavern Reborn: Floor I.<br>
+                    <small>Reward: 40 points, <i>Script Kiddie</i> title</small>
+                </td>
+                <td class='f-achievement-incomplete' data-achievement-id='cc2'>
+                    <b>Hacking II: Going places</b><br>
+                    Complete Cracker Cavern Reborn: Floor II.<br>
+                    <small>Reward: 60 points, <i>Penetration Tester</i> title</small>
+                </td>
+            </tr>
+            <tr>
+                <td class='f-achievement-incomplete' data-achievement-id='cc3'>
+                    <b>Hacking III: Scripting</b><br>
+                    Complete Cracker Cavern Reborn: Floor III.<br>
+                    <small>Reward: 100 points, <i>Security Researcher</i> title</small>
+                </td>
+                <td class='f-achievement-incomplete' data-achievement-id='cc4'>
+                    <b>Hacking IV: Loss of integrity</b><br>
+                    Complete Cracker Cavern Reborn: Floor IV.<br>
+                    <small>Reward: 137 points</small>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="f-container panel panel-default hide-by-default">
+        <div class="f-category">
+            Grand Achievements
+        </div>
+        <table class="table table-striped table-bordered table-condensed table-hover f-inside-table f-achievement-list">
+            <tr>
+                <td class='f-achievement-incomplete' data-achievement-id='ccall'>
+                    <b>Try harder</b><br>
+                    Claim the reward at the end of Cracker Cavern.<br>
+                    <small>Reward: 0 points, <i>Exploitation Expert</i> title</small>
+                </td>
+                <td class='f-achievement-incomplete' data-achievement-id='completion'>
+                    <b>Completionist</b><br>
+                    Obtain all Main Story achievements.<br>
+                    <small>Reward: 0 points, <i>Hero of Glitchland</i> title</small>
+                </td>
+            </tr>
+            <tr>
+                <td class='f-achievement-incomplete' data-achievement-id='legend'>
+                    <b>Legendary</b><br>
+                    Reach 1337 points.<br>
+                    <small>Reward: 0 points, <i>Legend</i> title</small>
+                </td>
+                <td class='f-achievement-incomplete' data-achievement-id='wholesome'>
+                    <b>Wholesome</b><br>
+                    Donate at least $2.00 to unlock the <a href='settings.html'>Wholesome Reward</a>.<br>
+                    <small>Reward: 1 points, <i>Wholesome</i> title</small>
+                </td>
+            </tr>
+            <tr>
+                <td class='f-achievement-incomplete' data-achievement-id='wholesomecompletion'>
+                    <b>Wholesome: Completionist</b><br>
+                    Obtain the <i>Completionist</i> achievement and the <i>Wholesome</i> achievement.<br>
+                    <small>Reward: 0 points, <i>Wholesome Hero</i> title</small>
+                </td>
+                <td class='f-achievement-incomplete' data-achievement-id='wholesomelegend'>
+                    <b>Wholesome: Legendary</b><br>
+                    Obtain the <i>Legendary</i> achievement and the <i>Wholesome</i> achievement.<br>
+                    <small>Reward: 0 points, <i>Ultimate Legend</i> title</small>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<br>

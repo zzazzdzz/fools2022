@@ -1,0 +1,55 @@
+===============================================================================
+THEZZAZZGLITCH'S FOOLS2022 - AUTOMATION RULES
+===============================================================================
+
+So you want to make automated requests to Fools2022 backend servers.
+
+I strongly believe that everyone should be able to enjoy the Fools Events in
+any way they see fit. Creating custom tools that interact with the servers
+is very much in the spirit of the challenge and is completely allowed!
+
+However, to avoid problems, make sure to stick to a few basic rules.
+These rules are just standard software development practices and you should
+follow them regardless of anything - but just in case, here they are:
+
+1. Introduce yourself. Make sure your automated tools send a meaningful
+   User-Agent header, to make them recognizable.
+   Example: parzival-mapdumper/1.0.0.
+   Requests coming from generic User-Agents, such as "urllib" or "curl",
+   might get falsely recognized as DoS attempts and blocked.
+
+2. Respect ratelimiting. Remember that Fools Events usually have tens of
+   people all playing at once. Trying to steal all of the server processing
+   time for yourself is just rude!
+   Therefore, all requests to backend API are subject to ratelimiting:
+
+   - A maximum of 4 requests per second in general.
+   - A maximum of 1 requests per second for in-game packet commands
+     (/packet/* endpoint).
+
+   Exceeding this limit will cause your requests to be dropped with status
+   code 429 Too Many Requests. Make sure you properly space out your
+   requests to avoid triggering this condition.
+
+   If your user account has Cracker Cavern III completed and Wholesome
+   Reward unlocked, you can double your packet request rate to 2 requests
+   per second!
+   To make use of that privilege, send your packets to the /turbopacket/*
+   endpoint instead of the /packet/* endpoint.
+
+3. Don't be evil. Don't do things that actively try to ruin the fun for
+   everyone. I might ban people doing naughty stuff at my own discretion.
+
+   Note: using multiple IP addresses to bypass ratelimiting counts towards
+   this rule. Please don't be greedy... think about all of those people who
+   just want to play the game!
+
+4. Use exponential backoff. This is just a fancy way of saying: if the
+   request fails, make sure to wait for a bit before trying again, and
+   increase the delay each time something goes wrong.
+   Spamming the server with useless requests is generally not advisable.
+
+With all of that in mind, I wish you best of luck while writing your cool
+map dumpers and lottery bots. Have fun!
+
+~ TheZZAZZGlitch

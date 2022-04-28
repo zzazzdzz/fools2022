@@ -1,0 +1,1 @@
+python3 -m nuitka --onefile main.py --include-data-file=glitchland.png=glitchland.png --plugin-enable=tk-inter --windows-disable-console --windows-icon-from-ico=zzazz.ico
