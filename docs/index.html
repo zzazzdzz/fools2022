@@ -28,7 +28,7 @@
                 var cl = x[i]['title'].toLowerCase().replace(/\s/g, '-');
                 var row = $('<tr class="' + (x[i]['wholesome'] ? "wholesome" : "") + '">');
                 row.append($("<td style='width:150px'><b>#" + (i+1) + "</b></td>"));
-                row.append($("<td><b><a class='nick-" + cl + "' href=\"profile.html?" + entities(x[i]['uid']) + "\">" + entities(x[i]['username']) + "</a></b> <i class='title-" + cl + "'>&laquo;" + entities(x[i]['title']) + "&raquo;&nbsp;</i></td>"));
+                row.append($("<td><b><b class='nick-" + cl + "' href=\"profile.html?" + entities(x[i]['uid']) + "\">" + entities(x[i]['username']) + "</b></b> <i class='title-" + cl + "'>&laquo;" + entities(x[i]['title']) + "&raquo;&nbsp;</i></td>"));
                 row.append($("<td style='width:200px'><b>" + x[i]['score'] + "</b></td>"));
                 $("#leaderboard").append(row);
             }
